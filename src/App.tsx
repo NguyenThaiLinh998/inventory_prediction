@@ -7,13 +7,17 @@ import InventoryChat from "./components/InventoryChat";
 import { Line, LineChart, Tooltip, XAxis, YAxis } from "recharts";
 import ChartInventory from "./components/ChartInventory";
 import useDataChart from "./hooks/useDataChart";
+import FullScreenLoader from "./components/FullScreenLoader";
+import useLoading from "./hooks/useLoading";
 
 const { Header, Sider, Content } = Layout;
 
 function App() {
   const { dataChart } = useDataChart();
+  const { isLoading } = useLoading();
   return (
     <Layout style={{ minHeight: "100vh" }}>
+      {isLoading && <FullScreenLoader />}
       <Sider width={200}>
         <SidebarMenu />
       </Sider>

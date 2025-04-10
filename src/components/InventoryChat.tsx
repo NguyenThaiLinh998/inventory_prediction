@@ -8,11 +8,13 @@ import {
 import axios from "axios";
 import useDataChart from "../hooks/useDataChart";
 import { message, notification } from "antd";
+import useLoading from "../hooks/useLoading";
 
 const InventoryChat = () => {
   const { setDataChart } = useDataChart();
   const inputRef: any = useRef(null);
   const [messages, setMessages] = useState([]);
+  const { setIsLoading } = useLoading();
   const suggestions = [
     "“What is the most depleted SKU in amount?”",
     "“Got any ideas about inventory for a Black Friday campaign?”.",
@@ -26,6 +28,7 @@ const InventoryChat = () => {
     await sendApi(value);
   };
   const sendApi = async (value: string) => {
+    setIsLoading(true);
     try {
       const payload = {
         question: value,
@@ -40,7 +43,15 @@ const InventoryChat = () => {
       );
       setDataChart(data?.data);
     } catch (error: any) {
-      alert(error?.response?.data?.detail);
+      setMessages(
+        (prev) =>
+          [
+            ...prev,
+            { text: error?.response?.data?.detail, sender: "bot" },
+          ] as any
+      );
+    } finally {
+      setIsLoading(false);
     }
   };
   const handleOnClick = async () => {
@@ -53,7 +64,6 @@ const InventoryChat = () => {
   return (
     <div className={styles.container}>
       <h1 className={styles.title}>
-        <span className={styles.arrow}>➜</span>{" "}
         <span className={styles.gradient}>Inventory Chat</span>
       </h1>
       {messages.length > 0 ? (
